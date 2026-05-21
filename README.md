@@ -5,7 +5,7 @@
  _     ___   _   _  _   _  _   _   _  _   ___
 | |   / _ \ / \ | \| | | \/ | | | | \| | |  _ \
 | |__| (_) / _ \| .` | | |\ | | | | .| | |_| |
-|____|\___/_/ \_\_|\_| |_||_| |_| |_|\_||____/
+|____|\___/_/ \_\_|\_| |_||_| |_| |_|\_| |____/
 ```
 
 ### **Simulate. Analyze. Understand.**
@@ -38,7 +38,7 @@
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                                                             │
-│   💰  Principal  →  📊  Calculate  →  📅  Schedule  →  ✅  │
+    💰  Principal  →  📊  Calculate  →  📅  Schedule  → ✅      
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -63,9 +63,9 @@ The core idea is simple: **demystify loans**. Interest rates, repayment schedule
 
 ```
 ╔══════════════════════════════════════════════════════════════════╗
-║                     CORE FEATURE MATRIX                         ║
+║                     CORE FEATURE MATRIX                          ║
 ╠══════════════════════╦═══════════════════════════════════════════╣
-║  🏦 Loan Calculator  ║  Monthly payments · Total cost · APR     ║
+║  🏦 Loan Calculator  ║  Monthly payments · Total cost · APR      ║
 ╠══════════════════════╬═══════════════════════════════════════════╣
 ║  📅 Schedule View    ║  Month-by-month breakdown · Balance track ║
 ╠══════════════════════╬═══════════════════════════════════════════╣
@@ -140,7 +140,7 @@ Month │  Payment  │  Interest  │  Principal  │  Balance
                     │  OOP Classes    │
                     │   Algorithms    │
                     └────────┬────────┘
-                             │
+                             │ 
                     ┌────────▼────────┐
                     │      TOOLS      │
                     │     VS Code     │
