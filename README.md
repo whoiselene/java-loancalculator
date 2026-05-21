@@ -2,12 +2,10 @@
 <div align="center">
 
 ```
-██╗      ██████╗  █████╗ ███╗   ██╗███╗   ███╗██╗███╗   ██╗██████╗
-██║     ██╔═══██╗██╔══██╗████╗  ██║████╗ ████║██║████╗  ██║██╔══██╗
-██║     ██║   ██║███████║██╔██╗ ██║██╔████╔██║██║██╔██╗ ██║██║  ██║
-██║     ██║   ██║██╔══██║██║╚██╗██║██║╚██╔╝██║██║██║╚██╗██║██║  ██║
-███████╗╚██████╔╝██║  ██║██║ ╚████║██║ ╚═╝ ██║██║██║ ╚████║██████╔╝
-╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═════╝
+ _     ___   _   _  _   _  _   _   _  _   ___
+| |   / _ \ / \ | \| | | \/ | | | | \| | |  _ \
+| |__| (_) / _ \| .` | | |\ | | | | .| | |_| |
+|____|\___/_/ \_\_|\_| |_||_| |_| |_|\_||____/
 ```
 
 ### **Simulate. Analyze. Understand.**
@@ -15,7 +13,8 @@
 
 <br>
 
- <img width="984" height="640" alt="image" src="https://github.com/user-attachments/assets/e751aa72-a19f-45da-8cef-15fb2316e206" />
+ <img width="984" height="640" alt="image" src="https://github.com/user-attachments/assets/e751aa72-a19f-45da-8cef-15fb2316e206" /> <img width="520" height="539" alt="Screenshot 2026-05-21 at 03 31 44" src="https://github.com/user-attachments/assets/aa70c3a8-cfc2-4131-803e-aac33fcd4d4e" />
+
 
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
