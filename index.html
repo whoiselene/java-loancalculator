@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LoanMind — Loan Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #0a0a0f;
+      --ink2: #13131a;
+      --ink3: #1a1a25;
+      --surface: #20202e;
+      --surface2: #28283a;
+      --surface3: #32324a;
+      --gold: #c9a84c;
+      --gold2: #e8c86d;
+      --gold-glow: #c9a84c22;
+      --silver: #8b9bb4;
+      --txt: #f0eeea;
+      --txt2: #b0aaa0;
+      --txt3: #6e6860;
+      --r: 12px;
+      --rr: 20px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--txt);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* ── Header ── */
+    .app-header {
+      width: 100%;
+      max-width: 960px;
+      padding: 2rem 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #ffffff08;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    .app-header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold) 40%, transparent);
+    }
+    .brand { display: flex; align-items: baseline; gap: 10px; }
+    .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--txt);
+    }
+    .brand-name span { color: var(--gold); }
+    .brand-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--silver);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.6;
+    }
+    .header-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    /* ── Card Container ── */
+    .card {
+      width: 100%;
+      max-width: 960px;
+      background: var(--ink2);
+      border-radius: 24px;
+      border: 1px solid #ffffff08;
+      overflow: hidden;
+      position: relative;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold) 30%, var(--gold2) 50%, var(--gold) 70%, transparent);
+      opacity: 0.5;
+    }
+
+    /* ── Decorative geo ── */
+    .geo {
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 220px; height: 220px;
+      opacity: 0.04;
+      pointer-events: none;
+    }
+
+    /* ── Body Layout ── */
+    .body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .left {
+      padding: 2.5rem 2rem;
+      border-right: 1px solid #ffffff06;
+    }
+    .right {
+      padding: 2.5rem 2rem;
+      background: linear-gradient(160deg, var(--ink3) 0%, var(--ink2) 100%);
+    }
+
+    /* ── Section Label ── */
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.8;
+      margin-bottom: 2rem;
+    }
+
+    /* ── Fields ── */
+    .field { margin-bottom: 2rem; }
+    .field-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .field-label { font-size: 13px; color: var(--txt2); letter-spacing: 0.3px; }
+    .field-value {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--txt);
+      background: var(--surface);
+      padding: 4px 12px;
+      border-radius: 8px;
+      border: 1px solid #ffffff0a;
+      min-width: 90px;
+      text-align: center;
+    }
+
+    /* ── Range sliders ── */
+    input[type="range"] {
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 2px;
+      background: var(--surface2);
+      border-radius: 1px;
+      outline: none;
+      cursor: pointer;
+      margin-bottom: 4px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, var(--gold2), var(--gold));
+      border: 3px solid var(--ink);
+      box-shadow: 0 0 14px var(--gold-glow);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+      box-shadow: 0 0 22px #c9a84c55;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: 3px solid var(--ink);
+      cursor: pointer;
+    }
+    .range-bounds {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2px;
+    }
+    .range-bound {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--txt3);
+    }
+
+    /* ── Selects ── */
+    .select-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .select-field { margin-bottom: 0; }
+    select {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid #ffffff0f;
+      border-radius: var(--r);
+      color: var(--txt);
+      padding: 10px 14px;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b9bb4' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+    }
+    select:focus { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold-glow); }
+    select option { background: var(--surface2); }
+
+    /* ── Summary Output ── */
+    .payment-hero { margin-bottom: 0.5rem; }
+    .payment-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--txt3);
+      margin-bottom: 0.5rem;
+    }
+    .big-number {
+      font-family: 'DM Mono', monospace;
+      font-size: 52px;
+      font-weight: 700;
+      color: var(--txt);
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+    .big-number .sym {
+      font-size: 26px;
+      vertical-align: super;
+      font-weight: 400;
+      color: var(--gold);
+      margin-right: 2px;
+    }
+    .freq-label {
+      font-size: 12px;
+      color: var(--txt3);
+      letter-spacing: 0.5px;
+      margin-top: 6px;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #ffffff0a, transparent);
+      margin: 1.5rem 0;
+    }
+
+    /* ── Stat Grid ── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+    .stat {
+      background: var(--surface);
+      border-radius: var(--r);
+      padding: 1rem 1.1rem;
+      border: 1px solid #ffffff06;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .stat::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--gold), var(--gold2));
+      opacity: 0.4;
+    }
+    .stat:hover { border-color: #ffffff12; }
+    .stat-val {
+      font-family: 'DM Mono', monospace;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--txt);
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--txt3);
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Bars ── */
+    .bar-section { margin-bottom: 1.5rem; }
+    .bar-item { margin-bottom: 10px; }
+    .bar-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .bar-label { font-size: 11px; color: var(--txt2); }
+    .bar-pct {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--gold);
+    }
+    .bar-track {
+      height: 5px;
+      background: var(--surface2);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .bar-principal { background: linear-gradient(90deg, var(--gold), var(--gold2)); }
+    .bar-interest  { background: linear-gradient(90deg, #3a3a5c, #6060a0); }
+
+    /* ── Toggle ── */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+      padding: 1rem 0;
+      border-top: 1px solid #ffffff06;
+    }
+    .toggle-btn {
+      width: 38px; height: 22px;
+      background: var(--surface2);
+      border-radius: 11px;
+      position: relative;
+      transition: background 0.25s;
+      flex-shrink: 0;
+    }
+    .toggle-btn.on { background: var(--gold); }
+    .toggle-dot {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--txt);
+      position: absolute;
+      top: 3px; left: 3px;
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .toggle-btn.on .toggle-dot { transform: translateX(16px); }
+    .toggle-label { font-size: 12px; color: var(--txt2); }
+
+    /* ── Schedule ── */
+    .schedule {
+      display: none;
+      margin-top: 0.5rem;
+      max-height: 260px;
+      overflow-y: auto;
+      border: 1px solid #ffffff06;
+      border-radius: var(--r);
+      background: var(--ink);
+    }
+    .schedule.open { display: block; }
+    .schedule::-webkit-scrollbar { width: 4px; }
+    .schedule::-webkit-scrollbar-track { background: var(--ink); }
+    .schedule::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 2px; }
+
+    .sch-table { width: 100%; border-collapse: collapse; }
+    .sch-table thead th {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--txt3);
+      padding: 10px 12px 8px;
+      text-align: left;
+      background: var(--ink);
+      position: sticky;
+      top: 0;
+      border-bottom: 1px solid #ffffff08;
+    }
+    .sch-table tbody tr { transition: background 0.1s; }
+    .sch-table tbody tr:hover { background: var(--surface); }
+    .sch-table tbody td {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      padding: 6px 12px;
+      border-bottom: 1px solid #ffffff04;
+    }
+    .sch-num { color: var(--txt3); }
+    .sch-payment { color: var(--txt); }
+    .sch-int { color: #8888b8; }
+    .sch-prin { color: var(--silver); }
+    .sch-bal { color: var(--txt2); }
+
+    /* ── Extra payments section ── */
+    .extra-section {
+      padding: 1.5rem 2rem;
+      border-top: 1px solid #ffffff06;
+      background: var(--ink);
+    }
+    .extra-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 1rem;
+    }
+    .extra-card {
+      background: var(--surface);
+      border-radius: var(--r);
+      padding: 1rem 1.2rem;
+      border: 1px solid #ffffff06;
+      text-align: center;
+    }
+    .extra-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gold2);
+      margin-bottom: 4px;
+    }
+    .extra-lbl { font-size: 11px; color: var(--txt3); }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: 1.5rem;
+      font-size: 11px;
+      color: var(--txt3);
+      text-align: center;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      .body { grid-template-columns: 1fr; }
+      .left { border-right: none; border-bottom: 1px solid #ffffff06; }
+      .big-number { font-size: 40px; }
+      .extra-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-name">Loan<span>Mind</span></div>
+      <div class="brand-tag">Calculator</div>
+    </div>
+    <div class="header-badge">v2.0</div>
+  </header>
+
+  <div class="card">
+    <!-- Decorative geometry -->
+    <svg class="geo" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="110" cy="110" r="108" stroke="#c9a84c" stroke-width="0.5"/>
+      <circle cx="110" cy="110" r="75" stroke="#c9a84c" stroke-width="0.5"/>
+      <circle cx="110" cy="110" r="42" stroke="#c9a84c" stroke-width="0.5"/>
+      <line x1="2" y1="110" x2="218" y2="110" stroke="#c9a84c" stroke-width="0.3"/>
+      <line x1="110" y1="2" x2="110" y2="218" stroke="#c9a84c" stroke-width="0.3"/>
+      <line x1="34" y1="34" x2="186" y2="186" stroke="#c9a84c" stroke-width="0.3"/>
+      <line x1="186" y1="34" x2="34" y2="186" stroke="#c9a84c" stroke-width="0.3"/>
+    </svg>
+
+    <div class="body">
+      <!-- LEFT: Inputs -->
+      <div class="left">
+        <div class="section-label">Configure Loan</div>
+
+        <div class="field">
+          <div class="field-head">
+            <span class="field-label">Loan Amount</span>
+            <span class="field-value" id="amt-display">$25,000</span>
+          </div>
+          <input type="range" id="amt" min="1000" max="1000000" step="1000" value="25000">
+          <div class="range-bounds">
+            <span class="range-bound">$1K</span>
+            <span class="range-bound">$1M</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-head">
+            <span class="field-label">Interest Rate (APR)</span>
+            <span class="field-value" id="rate-display">6.5%</span>
+          </div>
+          <input type="range" id="rate" min="0.5" max="30" step="0.1" value="6.5">
+          <div class="range-bounds">
+            <span class="range-bound">0.5%</span>
+            <span class="range-bound">30%</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-head">
+            <span class="field-label">Loan Term</span>
+            <span class="field-value" id="term-display">5 yrs</span>
+          </div>
+          <input type="range" id="term" min="1" max="30" step="1" value="5">
+          <div class="range-bounds">
+            <span class="range-bound">1 yr</span>
+            <span class="range-bound">30 yrs</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-head">
+            <span class="field-label">Extra Monthly Payment</span>
+            <span class="field-value" id="extra-display">$0</span>
+          </div>
+          <input type="range" id="extra" min="0" max="5000" step="50" value="0">
+          <div class="range-bounds">
+            <span class="range-bound">$0</span>
+            <span class="range-bound">$5K</span>
+          </div>
+        </div>
+
+        <div class="select-row">
+          <div class="field select-field">
+            <div class="field-head"><span class="field-label">Currency</span></div>
+            <select id="currency">
+              <option value="$">USD ($)</option>
+              <option value="€">EUR (€)</option>
+              <option value="£">GBP (£)</option>
+              <option value="¥">JPY (¥)</option>
+              <option value="₹">INR (₹)</option>
+              <option value="HUF">HUF (Ft)</option>
+            </select>
+          </div>
+          <div class="field select-field">
+            <div class="field-head"><span class="field-label">Payment Freq.</span></div>
+            <select id="freq">
+              <option value="12">Monthly</option>
+              <option value="26">Bi-weekly</option>
+              <option value="52">Weekly</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Output -->
+      <div class="right">
+        <div class="section-label">Summary</div>
+
+        <div class="payment-hero">
+          <div class="payment-label">Payment Amount</div>
+          <div class="big-number">
+            <span class="sym" id="sym">$</span><span id="monthly">412.29</span>
+          </div>
+          <div class="freq-label" id="freq-label">per month</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="stat-grid">
+          <div class="stat">
+            <div class="stat-val" id="total-payment">$24,737</div>
+            <div class="stat-lbl">Total Payment</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val" id="total-interest">$5,737</div>
+            <div class="stat-lbl">Total Interest</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val" id="principal-display">$25,000</div>
+            <div class="stat-lbl">Principal</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val" id="eff-rate">23.0%</div>
+            <div class="stat-lbl">Effective Rate</div>
+          </div>
+        </div>
+
+        <div class="bar-section">
+          <div class="bar-item">
+            <div class="bar-label-row">
+              <span class="bar-label">Principal</span>
+              <span class="bar-pct" id="pct-principal">81.3%</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill bar-principal" id="bar-principal" style="width:81.3%"></div>
+            </div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-label-row">
+              <span class="bar-label">Interest</span>
+              <span class="bar-pct" id="pct-interest">18.7%</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill bar-interest" id="bar-interest" style="width:18.7%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="toggle-row" id="toggle-wrap">
+          <div class="toggle-btn" id="tog">
+            <div class="toggle-dot"></div>
+          </div>
+          <span class="toggle-label">Show Amortization Schedule</span>
+        </div>
+
+        <div class="schedule" id="schedule">
+          <table class="sch-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Payment</th>
+                <th>Interest</th>
+                <th>Principal</th>
+                <th>Balance</th>
+              </tr>
+            </thead>
+            <tbody id="sch-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Extra Payments Savings Row -->
+    <div class="extra-section" id="extra-section" style="display:none">
+      <div class="section-label">Extra Payment Savings</div>
+      <div class="extra-grid">
+        <div class="extra-card">
+          <div class="extra-val" id="ex-saved">—</div>
+          <div class="extra-lbl">Interest Saved</div>
+        </div>
+        <div class="extra-card">
+          <div class="extra-val" id="ex-time">—</div>
+          <div class="extra-lbl">Time Saved</div>
+        </div>
+        <div class="extra-card">
+          <div class="extra-val" id="ex-payoff">—</div>
+          <div class="extra-lbl">New Payoff Date</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">LoanMind · Results are estimates for illustrative purposes only</div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    function fmt(n, sym, decimals = 0) {
+      if (sym === 'HUF') return Math.round(n).toLocaleString() + ' Ft';
+      if (sym === '¥')   return sym + Math.round(n).toLocaleString();
+      if (sym === '₹')   return sym + n.toLocaleString('en-IN', { maximumFractionDigits: decimals });
+      return sym + n.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    }
+
+    function fmtPmt(n, sym) {
+      if (sym === 'HUF') return Math.round(n).toLocaleString() + ' Ft';
+      if (sym === '¥')   return sym + Math.round(n).toLocaleString();
+      return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function calc() {
+      const amt    = parseFloat($('amt').value);
+      const rate   = parseFloat($('rate').value) / 100;
+      const termYr = parseInt($('term').value);
+      const freq   = parseInt($('freq').value);
+      const sym    = $('currency').value;
+      const extra  = parseFloat($('extra').value);
+      const freqLabel = { 12: 'per month', 26: 'every 2 weeks', 52: 'per week' }[freq];
+
+      const n = termYr * freq;
+      const r = rate / freq;
+      const pmt = r === 0 ? amt / n : amt * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+      const totalPay = pmt * n;
+      const totalInt = totalPay - amt;
+      const pctP = (amt / totalPay * 100).toFixed(1);
+      const pctI = (totalInt / totalPay * 100).toFixed(1);
+      const effRate = (totalInt / amt * 100).toFixed(1);
+
+      // Update display symbol
+      const noPrefix = sym === 'HUF' || sym === '₹';
+      $('sym').textContent = noPrefix ? '' : sym;
+      $('sym').style.display = noPrefix ? 'none' : '';
+      $('monthly').textContent = fmtPmt(pmt, sym);
+      $('freq-label').textContent = freqLabel;
+
+      $('total-payment').textContent    = fmt(totalPay, sym);
+      $('total-interest').textContent   = fmt(totalInt, sym);
+      $('principal-display').textContent = fmt(amt, sym);
+      $('eff-rate').textContent          = effRate + '%';
+      $('pct-principal').textContent     = pctP + '%';
+      $('pct-interest').textContent      = pctI + '%';
+      $('bar-principal').style.width     = pctP + '%';
+      $('bar-interest').style.width      = pctI + '%';
+
+      $('amt-display').textContent  = fmt(amt, sym);
+      $('rate-display').textContent = parseFloat($('rate').value).toFixed(1) + '%';
+      $('term-display').textContent = termYr + (termYr === 1 ? ' yr' : ' yrs');
+      $('extra-display').textContent = fmt(extra, sym);
+
+      // Build amortization table
+      const maxRows = Math.min(n, 480);
+      let bal = amt;
+      let rows = '';
+      for (let i = 1; i <= maxRows; i++) {
+        const intPart  = bal * r;
+        const prinPart = pmt - intPart;
+        bal = Math.max(0, bal - prinPart);
+        rows += `<tr>
+          <td class="sch-num">${i}</td>
+          <td class="sch-payment">${fmt(pmt, sym, 0)}</td>
+          <td class="sch-int">${fmt(intPart, sym, 0)}</td>
+          <td class="sch-prin">${fmt(prinPart, sym, 0)}</td>
+          <td class="sch-bal">${fmt(bal, sym, 0)}</td>
+        </tr>`;
+      }
+      $('sch-body').innerHTML = rows;
+
+      // Extra payment savings
+      if (extra > 0) {
+        $('extra-section').style.display = '';
+        let bal2 = amt;
+        let months2 = 0;
+        let totalPay2 = 0;
+        const freqFactor = freq / 12;
+        const extraPerPeriod = extra / freqFactor;
+        while (bal2 > 0 && months2 < n * 2) {
+          const intPart = bal2 * r;
+          const pay = Math.min(pmt + extraPerPeriod, bal2 + intPart);
+          bal2 = bal2 + intPart - pay;
+          totalPay2 += pay;
+          months2++;
+        }
+        const saved = (totalPay - totalPay2);
+        const periodsaved = n - months2;
+        const monthsSaved = Math.round(periodsaved / freqFactor);
+        const yrsSaved = Math.floor(monthsSaved / 12);
+        const mosSaved = monthsSaved % 12;
+        const timeSavedStr = yrsSaved > 0
+          ? `${yrsSaved}yr ${mosSaved}mo`
+          : `${mosSaved} months`;
+
+        const now = new Date();
+        const payoffDate = new Date(now.setMonth(now.getMonth() + Math.round(months2 / freqFactor)));
+        const payoffStr = payoffDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+
+        $('ex-saved').textContent  = fmt(Math.max(0, saved), sym);
+        $('ex-time').textContent   = timeSavedStr;
+        $('ex-payoff').textContent = payoffStr;
+      } else {
+        $('extra-section').style.display = 'none';
+      }
+    }
+
+    ['amt','rate','term','extra','currency','freq'].forEach(id => {
+      $(id).addEventListener('input', calc);
+    });
+
+    $('toggle-wrap').addEventListener('click', () => {
+      $('tog').classList.toggle('on');
+      $('schedule').classList.toggle('open');
+    });
+
+    calc();
+  </script>
+</body>
+</html>
